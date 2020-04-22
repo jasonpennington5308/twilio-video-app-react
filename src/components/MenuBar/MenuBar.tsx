@@ -16,6 +16,7 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography } from '@material-ui/core';
 import FlipCameraButton from './FlipCameraButton/FlipCameraButton';
+import useEndButtonToggle from '../../hooks/useEndButtonToggle/useEndButtonToggle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,6 +60,27 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+let microphoneCheck = '';
+let cameraCheck = '';
+
+navigator.permissions
+  .query({ name: 'microphone' })
+  .then(permissionObj => {
+    microphoneCheck = permissionObj.state;
+  })
+  .catch(error => {
+    console.log('Got error :', error);
+  });
+
+navigator.permissions
+  .query({ name: 'camera' })
+  .then(permissionObj => {
+    cameraCheck = permissionObj.state;
+  })
+  .catch(error => {
+    console.log('Got error :', error);
+  });
+
 export default function MenuBar() {
   const classes = useStyles();
   const { URLRoomName } = useParams();
@@ -69,6 +91,7 @@ export default function MenuBar() {
   const [name, setName] = useState<string>(user?.displayName || '');
   const [roomName, setRoomName] = useState<string>('');
   const [roomToken, setRoomToken] = useState<string>('');
+  const [isEnded] = useEndButtonToggle();
 
   useEffect(() => {
     if (URLRoomName) {
@@ -92,6 +115,29 @@ export default function MenuBar() {
 
     connect(roomToken);
   };
+
+  console.log('Connect:');
+  console.log(
+    roomToken &&
+      roomToken !== null &&
+      roomToken !== '' &&
+      !isEnded &&
+      !isFetching &&
+      !isConnecting &&
+      !(cameraCheck === 'prompt' || microphoneCheck === 'prompt')
+  );
+  if (
+    roomToken &&
+    roomToken !== null &&
+    roomToken !== '' &&
+    !isEnded &&
+    !isFetching &&
+    !isConnecting &&
+    !(cameraCheck === 'prompt' || microphoneCheck === 'prompt')
+  ) {
+    console.log('connecting');
+    connect(roomToken);
+  }
 
   return (
     <AppBar className={classes.container} position="static">
@@ -140,7 +186,7 @@ export default function MenuBar() {
               variant="contained"
               disabled={isConnecting || !name || !roomName || isFetching}
             >
-              Join Room
+              Join Meeting
             </Button>
             {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
