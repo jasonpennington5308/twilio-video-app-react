@@ -16,6 +16,7 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography } from '@material-ui/core';
 import FlipCameraButton from './FlipCameraButton/FlipCameraButton';
+import ChooseDeviceOptions from './ChooseDeviceOptions/ChooseDeviceOptions';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
       maxWidth: 200,
+      visibility: 'hidden',
     },
     loadingSpinner: {
       marginLeft: '1em',
@@ -69,6 +71,7 @@ export default function MenuBar() {
   const [name, setName] = useState<string>(user?.displayName || '');
   const [roomName, setRoomName] = useState<string>('');
   const [roomToken, setRoomToken] = useState<string>('');
+  const [hasConnected, setHasConnected] = useState<boolean>(false);
 
   useEffect(() => {
     if (URLRoomName) {
@@ -90,8 +93,31 @@ export default function MenuBar() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    connect(roomToken);
+    if (
+      roomState === 'disconnected' &&
+      roomToken &&
+      roomToken !== null &&
+      roomToken !== '' &&
+      !isFetching &&
+      !isConnecting
+    ) {
+      connect(roomToken);
+      setHasConnected(true);
+    }
   };
+
+  if (
+    roomState === 'disconnected' &&
+    roomToken &&
+    roomToken !== null &&
+    roomToken !== '' &&
+    !hasConnected &&
+    !isFetching &&
+    !isConnecting
+  ) {
+    connect(roomToken);
+    setHasConnected(true);
+  }
 
   return (
     <AppBar className={classes.container} position="static">
@@ -140,7 +166,7 @@ export default function MenuBar() {
               variant="contained"
               disabled={isConnecting || !name || !roomName || isFetching}
             >
-              Join Room
+              Join Meeting
             </Button>
             {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
@@ -148,6 +174,7 @@ export default function MenuBar() {
           <h3>{/*  {roomName} */}</h3>
         )}
         <div className={classes.rightButtonContainer}>
+          {!isConnecting && !isFetching && <ChooseDeviceOptions />}
           <LocalAudioLevelIndicator />
           <FlipCameraButton />
           <ToggleFullscreenButton />
