@@ -1,9 +1,5 @@
-#menu-form {
-  display: none;
-}
 .time-warn {
   color: orange;
-  font-size: x-large;
   animation: blinker 1s linear infinite;
 }
 
@@ -14,7 +10,6 @@
 }
 .time-danger {
   color: red;
-  font-size: x-large;
   animation: blinker 1s linear infinite;
 }
 
@@ -36,5 +31,11 @@
 
 .time-normal {
   color: black;
+}
+
+.time-mobile {
+  font-size: x-small;
+}
+.time-desktop {
   font-size: x-large;
 }
