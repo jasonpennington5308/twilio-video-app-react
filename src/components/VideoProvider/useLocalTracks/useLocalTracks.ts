@@ -58,32 +58,32 @@ export function useLocalAudioTrack() {
 export function useLocalVideoTrack() {
   const [track, setTrack] = useState<LocalVideoTrack>();
 
-  const getLocalVideoTrack = useCallback(
-    (facingMode?: CreateLocalTrackOptions['facingMode'], deviceId?: CreateLocalTrackOptions['deviceId']) => {
-      const options: CreateLocalTrackOptions = {
-        frameRate: 24,
-        height: 720,
-        width: 1280,
-        name: 'camera',
-      };
+  const getLocalVideoTrack = useCallback((
+    //facingMode?: CreateLocalTrackOptions['facingMode'],
+    deviceId?: CreateLocalTrackOptions['deviceId']
+  ) => {
+    const options: CreateLocalTrackOptions = {
+      frameRate: 24,
+      height: 720,
+      width: 1280,
+      name: 'camera',
+    };
 
-      if (facingMode) {
-        options.facingMode = facingMode;
-      }
+    // if (facingMode) {
+    //   options.facingMode = facingMode;
+    // }
 
-      if (deviceId) {
-        options.deviceId = deviceId;
-      }
+    if (deviceId) {
+      options.deviceId = deviceId;
+    }
 
-      return ensureMediaPermissions().then(() =>
-        Video.createLocalVideoTrack(options).then(newTrack => {
-          setTrack(newTrack);
-          return newTrack;
-        })
-      );
-    },
-    []
-  );
+    return ensureMediaPermissions().then(() =>
+      Video.createLocalVideoTrack(options).then(newTrack => {
+        setTrack(newTrack);
+        return newTrack;
+      })
+    );
+  }, []);
 
   useEffect(() => {
     // We get a new local video track when the app loads.

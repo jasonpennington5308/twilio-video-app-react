@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
       maxWidth: 200,
-      visibility: 'hidden',
+      display: 'none',
     },
     loadingSpinner: {
       marginLeft: '1em',
@@ -123,7 +123,7 @@ export default function MenuBar() {
     <AppBar className={classes.container} position="static">
       <Toolbar className={classes.toolbar}>
         <input id="toggleScreenShare" type="hidden" />
-        <h3 id="timeLeft" className="time-normal">
+        <h3 id="timeLeft" className="time-normal time-desktop">
           --:--
         </h3>
         {roomState === 'disconnected' ? (
@@ -176,7 +176,9 @@ export default function MenuBar() {
         <div className={classes.rightButtonContainer}>
           {!isConnecting && !isFetching && <ChooseDeviceOptions />}
           <LocalAudioLevelIndicator />
-          <FlipCameraButton />
+          {
+            //<FlipCameraButton />
+          }
           <ToggleFullscreenButton />
           <Menu />
         </div>

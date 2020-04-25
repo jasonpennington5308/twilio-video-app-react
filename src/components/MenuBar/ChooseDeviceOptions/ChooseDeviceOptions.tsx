@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Select, MenuItem } from '@material-ui/core';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import useLocalTracks from '../../VideoProvider/useLocalTracks/useLocalTracks';
+//import useLocalTracks from '../../VideoProvider/useLocalTracks/useLocalTracks';
 
 export default function ChooseDeviceOptions() {
   const {
@@ -10,11 +10,8 @@ export default function ChooseDeviceOptions() {
     getLocalVideoTrack,
   } = useVideoContext();
 
-  const { getLocalAudioTrack } = useLocalTracks();
+  //const { getLocalAudioTrack } = useLocalTracks();
   const videoTrack = localTracks.find(track => track.name === 'camera');
-  console.log('current video track');
-  console.log(videoTrack);
-
   const [mediaDevices, setMediaDevices] = useState<MediaDeviceInfo[]>([]);
 
   useEffect(() => {
@@ -33,37 +30,34 @@ export default function ChooseDeviceOptions() {
       const videoConstraints = { exact: event.target.value };
 
       getLocalVideoTrack(videoConstraints).then(newVideoTrack => {
-        console.log('new video track');
-        console.log(newVideoTrack);
         localParticipant?.publishTrack(newVideoTrack, { priority: 'low' });
       });
     },
     [getLocalVideoTrack, localParticipant, videoTrack]
   );
 
-  const audioTrack = localTracks.find(track => track.name === 'microphone');
-  console.log('current audio track');
-  console.log(audioTrack);
-  const toggleMicroponeMode = useCallback(
-    event => {
-      const localTrackPublication = localParticipant?.unpublishTrack(audioTrack!);
-      // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-      localParticipant?.emit('trackUnpublished', localTrackPublication);
-      audioTrack!.stop();
+  // const audioTrack = localTracks.find(track => track.name === 'microphone');
+  // const toggleMicroponeMode = useCallback(
+  //   event => {
+  //     const localTrackPublication = localParticipant?.unpublishTrack(audioTrack!);
+  //     // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
+  //     localParticipant?.emit('trackUnpublished', localTrackPublication);
+  //     audioTrack!.stop();
 
-      const constraints = { exact: event.target.value };
+  //     const constraints = { exact: event.target.value };
 
-      getLocalAudioTrack(constraints).then(newAudioTrack => {
-        console.log('new audio track');
-        console.log(newAudioTrack);
-        localParticipant?.publishTrack(newAudioTrack, { priority: 'low' });
-      });
-    },
-    [getLocalVideoTrack, localParticipant, audioTrack]
-  );
+  //     getLocalAudioTrack(constraints).then(newAudioTrack => {
+  //       console.log('new audio track');
+  //       console.log(newAudioTrack);
+  //       localParticipant?.publishTrack(newAudioTrack, { priority: 'low' });
+  //     });
+  //   },
+  //   [getLocalVideoTrack, localParticipant, audioTrack]
+  // );
 
   return (
     <div>
+      {/*
       <Select>
         {mediaDevices
           .filter(x => x.kind === 'audiooutput')
@@ -86,6 +80,7 @@ export default function ChooseDeviceOptions() {
             </MenuItem>
           ))}
       </Select>
+      */}
       <Select onChange={toggleCameraMode}>
         {mediaDevices
           .filter(x => x.kind === 'videoinput')
