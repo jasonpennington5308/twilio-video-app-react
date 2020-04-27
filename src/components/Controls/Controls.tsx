@@ -40,8 +40,8 @@ export default function Controls() {
   const classes = useStyles();
   const roomState = useRoomState();
   const isReconnecting = roomState === 'reconnecting';
-  const isUserActive = useIsUserActive();
-  const showControls = isUserActive || roomState === 'disconnected';
+  //const isUserActive = useIsUserActive();
+  const showControls = true; // isUserActive || roomState === 'disconnected';
   const screenShare = document.getElementById('toggleScreenShare');
   let isDisabled = false;
   if (screenShare && screenShare.getAttribute('value') === 'True') {

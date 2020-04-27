@@ -15,7 +15,7 @@ import { useParams } from 'react-router-dom';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography } from '@material-ui/core';
-import FlipCameraButton from './FlipCameraButton/FlipCameraButton';
+//import FlipCameraButton from './FlipCameraButton/FlipCameraButton';
 import ChooseDeviceOptions from './ChooseDeviceOptions/ChooseDeviceOptions';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -65,8 +65,11 @@ export default function MenuBar() {
   const classes = useStyles();
   const { URLRoomName } = useParams();
   const { user, getToken, isFetching } = useAppState();
-  const { isConnecting, connect } = useVideoContext();
+  const { isConnecting, connect, localTracks } = useVideoContext();
   const roomState = useRoomState();
+
+  //const { getLocalAudioTrack } = useLocalTracks();
+  const videoTrack = localTracks.find(track => track.name === 'camera');
 
   const [name, setName] = useState<string>(user?.displayName || '');
   const [roomName, setRoomName] = useState<string>('');
@@ -92,7 +95,6 @@ export default function MenuBar() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (
       roomState === 'disconnected' &&
       roomToken &&
@@ -113,7 +115,8 @@ export default function MenuBar() {
     roomToken !== '' &&
     !hasConnected &&
     !isFetching &&
-    !isConnecting
+    !isConnecting &&
+    videoTrack
   ) {
     connect(roomToken);
     setHasConnected(true);
@@ -158,16 +161,18 @@ export default function MenuBar() {
               onChange={handleRoomTokenChange}
               margin="dense"
             />
-            <Button
-              className={classes.joinButton}
-              id="menu-connect"
-              type="submit"
-              color="primary"
-              variant="contained"
-              disabled={isConnecting || !name || !roomName || isFetching}
-            >
-              Join Meeting
-            </Button>
+            {roomToken && (
+              <Button
+                className={classes.joinButton}
+                id="menu-connect"
+                type="submit"
+                color="primary"
+                variant="contained"
+                disabled={isConnecting || !name || !roomName || isFetching}
+              >
+                Join
+              </Button>
+            )}
             {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
         ) : (
@@ -179,7 +184,7 @@ export default function MenuBar() {
           {
             //<FlipCameraButton />
           }
-          <ToggleFullscreenButton />
+          {roomToken && <ToggleFullscreenButton />}
           <Menu />
         </div>
       </Toolbar>
