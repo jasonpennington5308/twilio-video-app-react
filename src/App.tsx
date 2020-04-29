@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
-import './app.css'
+import './app.css';
 import Controls from './components/Controls/Controls';
 import LocalVideoPreview from './components/LocalVideoPreview/LocalVideoPreview';
 import MenuBar from './components/MenuBar/MenuBar';
@@ -13,6 +13,7 @@ import useRoomState from './hooks/useRoomState/useRoomState';
 const Container = styled('div')({
   display: 'grid',
   gridTemplateRows: 'auto 1fr',
+  margin: '1em',
 });
 
 const Main = styled('main')({

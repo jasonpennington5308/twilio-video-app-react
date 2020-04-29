@@ -1,7 +1,20 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Select, MenuItem } from '@material-ui/core';
+import { Select, MenuItem, FormControl, FormHelperText } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 //import useLocalTracks from '../../VideoProvider/useLocalTracks/useLocalTracks';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2),
+    },
+  })
+);
 
 export default function ChooseDeviceOptions() {
   const {
@@ -9,6 +22,8 @@ export default function ChooseDeviceOptions() {
     localTracks,
     getLocalVideoTrack,
   } = useVideoContext();
+  const classes = useStyles();
+  const [camera, setCamera] = useState('');
 
   //const { getLocalAudioTrack } = useLocalTracks();
   const videoTrack = localTracks.find(track => track.name === 'camera');
@@ -17,8 +32,17 @@ export default function ChooseDeviceOptions() {
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
       setMediaDevices(mediaDevices);
+      const currentCamera = mediaDevices.filter(
+        mediaDevice => mediaDevice.kind === 'videoinput' && mediaDevice.label === videoTrack?.mediaStreamTrack.label
+      );
+
+      if (currentCamera && currentCamera.length && currentCamera.length === 1) {
+        setCamera(currentCamera[0].deviceId);
+      }
     });
   }, []);
+
+  const hasMultipleCameras = mediaDevices.filter(x => x.kind === 'videoinput').length > 1;
 
   const toggleCameraMode = useCallback(
     event => {
@@ -28,7 +52,7 @@ export default function ChooseDeviceOptions() {
       videoTrack!.stop();
 
       const videoConstraints = { exact: event.target.value };
-
+      setCamera(event.target.value);
       getLocalVideoTrack(videoConstraints).then(newVideoTrack => {
         localParticipant?.publishTrack(newVideoTrack, { priority: 'low' });
       });
@@ -81,19 +105,32 @@ export default function ChooseDeviceOptions() {
           ))}
       </Select>
       */}
-      <Select onChange={toggleCameraMode}>
-        {mediaDevices
-          .filter(x => x.kind === 'videoinput')
-          .map(mediaDevice => (
-            <MenuItem
-              selected={mediaDevice.label === videoTrack?.mediaStreamTrack.label}
-              key={mediaDevice.deviceId}
-              value={mediaDevice.deviceId}
-            >
-              {mediaDevice.label}
+      {hasMultipleCameras && (
+        <FormControl className={classes.formControl}>
+          <Select
+            value={camera}
+            inputProps={{ 'aria-label': 'Without label' }}
+            displayEmpty
+            className={classes.selectEmpty}
+            onChange={toggleCameraMode}
+          >
+            <MenuItem value="" disabled>
+              Select Camera
             </MenuItem>
-          ))}
-      </Select>
+            {mediaDevices
+              .filter(x => x.kind === 'videoinput')
+              .map(mediaDevice => (
+                <MenuItem
+                  //selected={mediaDevice.label === videoTrack?.mediaStreamTrack.label}
+                  key={mediaDevice.deviceId}
+                  value={mediaDevice.deviceId}
+                >
+                  {mediaDevice.label}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+      )}
     </div>
   );
 }

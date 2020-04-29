@@ -1,5 +1,6 @@
 .time-warn {
-  color: orange;
+  background-color: orange;
+  color: white;
   animation: blinker 1s linear infinite;
 }
 
@@ -9,7 +10,8 @@
   }
 }
 .time-danger {
-  color: red;
+  background-color: crimson;
+  color: white;
   animation: blinker 1s linear infinite;
 }
 
@@ -35,7 +37,9 @@
 
 .time-mobile {
   font-size: x-small;
+  margin: '1em';
 }
 .time-desktop {
+  margin: '1em';
   font-size: x-large;
 }
