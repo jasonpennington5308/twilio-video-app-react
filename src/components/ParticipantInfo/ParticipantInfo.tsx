@@ -15,6 +15,7 @@ import useParticipantNetworkQualityLevel from '../../hooks/useParticipantNetwork
 import usePublications from '../../hooks/usePublications/usePublications';
 import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useTrack from '../../hooks/useTrack/useTrack';
+import useLocalAudioToggle from '../../hooks/useLocalAudioToggle/useLocalAudioToggle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -104,16 +105,14 @@ export default function ParticipantInfo({
 
   const videoTrack = useTrack(videoPublication);
   const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
+  const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
 
   const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack;
 
   const classes = useStyles();
 
-  if (disableAudio) {
-    const localAudio = audioPublication?.track as LocalAudioTrack;
-    if (localAudio && localAudio.disable && localAudio.isEnabled) {
-      localAudio.disable();
-    }
+  if (disableAudio && isAudioEnabled) {
+    toggleAudioEnabled();
   }
 
   return (

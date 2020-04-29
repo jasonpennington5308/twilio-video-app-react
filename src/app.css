@@ -34,7 +34,8 @@
 }
 
 .time-mobile {
-  font-size: x-small;
+  font-size: medium;
+  margin: '1em';
 }
 .time-desktop {
   font-size: x-large;

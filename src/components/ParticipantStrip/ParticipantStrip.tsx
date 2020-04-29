@@ -55,7 +55,7 @@ export default function ParticipantStrip() {
             participant={participant}
             isSelected={selectedParticipant === participant}
             hideParticipant={
-              mainParticipant.identity === participant.identity ||
+              (mainParticipant.identity === participant.identity && mainParticipant !== screenShareParticipant) ||
               participant.identity.split('|')[0] === localParticipant.identity.split('|')[0] + '.phone' ||
               (participant.identity.split('|')[0].endsWith('.phone') &&
                 participants.some(
